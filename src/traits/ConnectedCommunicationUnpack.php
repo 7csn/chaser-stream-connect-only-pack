@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace chaser\stream\traits;
 
+use chaser\stream\interfaces\part\ConnectedCommunicationUnpackInterface;
 use chaser\stream\event\{Message, RecvBufferFull, UnpackingFail};
 use chaser\stream\exception\UnpackedException;
 
@@ -12,7 +13,9 @@ use chaser\stream\exception\UnpackedException;
  *
  * @package chaser\stream\traits
  *
- * @property int $maxRecvBufferSize
+ * @property-read int $maxRecvBufferSize
+ *
+ * @uses CommunicationConnected
  */
 trait ConnectedCommunicationUnpack
 {
@@ -28,7 +31,7 @@ trait ConnectedCommunicationUnpack
      */
     public function configurations(): array
     {
-        return ['maxRecvBufferSize' => self::MAX_RECV_BUFFER_SIZE];
+        return ['maxRecvBufferSize' => ConnectedCommunicationUnpackInterface::MAX_RECV_BUFFER_SIZE];
     }
 
     /**
