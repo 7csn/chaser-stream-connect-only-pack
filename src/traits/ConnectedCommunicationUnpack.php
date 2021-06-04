@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace chaser\stream\traits;
 
 use chaser\stream\interfaces\part\ConnectedCommunicationUnpackInterface;
-use chaser\stream\event\{Message, RecvBufferFull, UnpackingFail};
+use chaser\stream\event\{RecvBufferFull, UnpackingFail};
 use chaser\stream\exception\UnpackedException;
 
 /**
@@ -41,8 +41,9 @@ trait ConnectedCommunicationUnpack
     {
         $this->recvBuffer .= $data;
         try {
-            if (null !== $message = $this->unpack()) {
-                $this->dispatch(Message::class, $message);
+            $message = $this->unpack();
+            if ($message) {
+                $this->dispatchMessage($message);
             } elseif (strlen($this->recvBuffer) >= $this->maxRecvBufferSize) {
                 $this->dispatch(RecvBufferFull::class);
                 $this->destroy(true);

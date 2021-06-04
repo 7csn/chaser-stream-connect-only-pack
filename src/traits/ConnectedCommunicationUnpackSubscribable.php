@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace chaser\stream\traits;
 
+use chaser\stream\interfaces\SubscriberInterface;
 use chaser\stream\event\{RecvBufferFull, UnpackingFail};
 
 /**
  * 通信包装事件订阅部分特征
  *
  * @package chaser\stream\traits
+ *
+ * @see SubscriberInterface
  */
 trait ConnectedCommunicationUnpackSubscribable
 {
@@ -18,10 +21,7 @@ trait ConnectedCommunicationUnpackSubscribable
      */
     protected static function events(): array
     {
-        return [
-            RecvBufferFull::class => 'receiveBufferFull',
-            UnpackingFail::class => 'unpackingFail'
-        ];
+        return [RecvBufferFull::class => 'receiveBufferFull', UnpackingFail::class => 'unpackingFail'];
     }
 
     /**
