@@ -51,7 +51,7 @@ trait ConnectedCommunicationUnpack
         try {
             $message = $this->unpack();
             if ($message) {
-                $this->dispatch(Message::class, $data);
+                $this->dispatch(Message::class, $message);
             } elseif (strlen($this->recvBuffer) >= $this->maxRecvBufferSize) {
                 $this->dispatch(RecvBufferFull::class);
                 $this->destroy(true);
