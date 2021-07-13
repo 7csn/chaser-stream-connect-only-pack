@@ -19,7 +19,7 @@ trait ConnectedCommunicationUnpackSubscribable
     /**
      * @inheritDoc
      */
-    protected static function events(): array
+    public static function events(): array
     {
         return [RecvBufferFull::class => 'receiveBufferFull', UnpackingFail::class => 'unpackingFail'];
     }
