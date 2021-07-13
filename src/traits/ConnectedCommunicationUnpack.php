@@ -7,6 +7,7 @@ namespace chaser\stream\traits;
 use chaser\stream\interfaces\part\ConnectedCommunicationUnpackInterface;
 use chaser\stream\event\{Message, RecvBufferFull, UnpackingFail};
 use chaser\stream\exception\UnpackedException;
+use Stringable;
 
 /**
  * 通信包装部分特征
@@ -27,9 +28,16 @@ trait ConnectedCommunicationUnpack
     protected string $recvBuffer = '';
 
     /**
+     * 整包字节数
+     *
+     * @var int|null
+     */
+    protected ?int $unpackBytes = null;
+
+    /**
      * @inheritDoc
      */
-    public function configurations(): array
+    public static function configurations(): array
     {
         return ['maxRecvBufferSize' => ConnectedCommunicationUnpackInterface::MAX_RECV_BUFFER_SIZE];
     }
@@ -37,7 +45,7 @@ trait ConnectedCommunicationUnpack
     /**
      * @inheritDoc
      */
-    public function readHandle(string $data): void
+    protected function readHandle(string $data): void
     {
         $this->recvBuffer .= $data;
         try {
@@ -57,12 +65,24 @@ trait ConnectedCommunicationUnpack
     /**
      * 尝试解包
      *
-     * @return string
+     * @return string|Stringable|null
      */
-    protected function unpack(): string
+    protected function unpack(): string|Stringable|null
     {
-        $data = $this->recvBuffer;
-        $this->recvBuffer = '';
-        return $data;
+        if ($this->unpackBytes === null) {
+            if (null === $size = $this->tryToGetPackageSize()) {
+                return null;
+            }
+            $this->unpackBytes = $size;
+        }
+
+        if (strlen($this->recvBuffer) >= $this->unpackBytes) {
+            $request = $this->getRequest();
+            $this->recvBuffer = substr($this->recvBuffer, $this->unpackBytes);
+            $this->unpackReset();
+            return $request;
+        }
+
+        return null;
     }
 }
