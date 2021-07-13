@@ -21,7 +21,7 @@ trait ConnectedCommunicationUnpackSubscribable
      */
     public static function events(): array
     {
-        return [RecvBufferFull::class => 'receiveBufferFull', UnpackingFail::class => 'unpackingFail'];
+        return [RecvBufferFull::class => 'recvBufferFull', UnpackingFail::class => 'unpackingFail'];
     }
 
     /**
